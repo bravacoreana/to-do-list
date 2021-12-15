@@ -1,7 +1,7 @@
 # To Do List with React and TypeScript
 
-- [ ] create and delete boards
-- [ ] create and delete lists
-- [ ] drag and drop lists
-- [ ] localStorage
-- [ ] darkmode
+- [x] create and delete boards
+- [x] create and delete lists
+- [x] drag and drop lists
+- [x] localStorage
+- [x] darkmode
