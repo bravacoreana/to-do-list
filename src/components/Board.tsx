@@ -5,6 +5,7 @@ import { useSetRecoilState } from "recoil";
 import { Droppable } from "react-beautiful-dnd";
 import DraggableCard from "./DraggableCard";
 import styled from "styled-components";
+import { useOnClickOutside } from "usehooks-ts";
 
 const Container = styled.div`
   min-width: 320px;
@@ -76,6 +77,7 @@ const Ul = styled.ul`
 const Li = styled.li<IBoard>`
   padding: 7px 10px;
   cursor: pointer;
+  color: ${(props) => props.theme.accentColor};
 `;
 const Form = styled.form`
   display: flex;
@@ -225,6 +227,14 @@ export default function Board({ toDos, boardId }: IBoardProps) {
     setSettingBoard(false);
   };
 
+  const formRef = useRef(null);
+  const handleClickOutside = () => setToDoForm(false);
+  useOnClickOutside(formRef, handleClickOutside);
+
+  const modalRef = useRef(null);
+  const handleClickOutsideModal = () => setSettingBoard(false);
+  useOnClickOutside(modalRef, handleClickOutsideModal);
+
   return (
     <Container>
       <Header>
@@ -235,11 +245,13 @@ export default function Board({ toDos, boardId }: IBoardProps) {
           <Title>{boardId}</Title>
         </HeaderTitle>
         <BoardButtons>
-          <BoardButton onClick={controlForm}>+</BoardButton>
+          <BoardButton onClick={controlForm} ref={formRef}>
+            +
+          </BoardButton>
           <BoardButton onClick={editBoard}>x</BoardButton>
         </BoardButtons>
         {settingBoard ? (
-          <Ul>
+          <Ul ref={modalRef}>
             <Li
               as="form"
               boardId={boardId}
@@ -261,7 +273,7 @@ export default function Board({ toDos, boardId }: IBoardProps) {
       </Header>
 
       {todoForm ? (
-        <Form onSubmit={handleSubmit(onValid)}>
+        <Form onSubmit={handleSubmit(onValid)} ref={formRef}>
           <Input
             {...register("toDo", { required: true })}
             placeholder="Enter a note"

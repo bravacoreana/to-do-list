@@ -1,11 +1,13 @@
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import Board from "./components/Board";
 import Button from "./components/Button";
 import styled from "styled-components";
 import { isDarkAtom, toDoState } from "./atoms";
+
+import { useOnClickOutside } from "usehooks-ts";
 
 const Container = styled.div`
   height: 100vh;
@@ -26,8 +28,10 @@ const ButtonBox = styled.div`
   justify-content: flex-end;
   align-items: flex-end;
 `;
-
-// const Box = styled.div``;
+const FormBox = styled.div`
+  display: flex;
+  align-items: flex-end;
+`;
 
 const Input = styled.input`
   float: right;
@@ -135,21 +139,26 @@ function ToDo() {
       });
     }
   };
+  const headerRef = useRef(null);
+  const handleClickOutside = () => setCategory(false);
+  useOnClickOutside(headerRef, handleClickOutside);
 
   return (
     <Container>
       <ButtonBox>
-        {category ? (
-          <form onSubmit={handleSubmit(onValid)}>
-            <Input
-              type="text"
-              placeholder="add board"
-              {...register("board", { required: true })}
-            />
-          </form>
-        ) : null}
+        <FormBox ref={headerRef}>
+          {category ? (
+            <form onSubmit={handleSubmit(onValid)}>
+              <Input
+                type="text"
+                placeholder="add board"
+                {...register("board", { required: true })}
+              />
+            </form>
+          ) : null}
 
-        <Button onClick={toggleCategory}>+</Button>
+          <Button onClick={toggleCategory}>+</Button>
+        </FormBox>
         <Button onClick={toggleDarkAtom}>{isDark ? "🌙" : "🌞"}</Button>
       </ButtonBox>
       <DragDropContext onDragEnd={onDragEnd}>
